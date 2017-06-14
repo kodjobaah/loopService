@@ -47,4 +47,4 @@ If 20% of the data received in the batch have a value greater than 10 the an **I
 
 Please refer to the architecture document of how this will be deployed in production.
 
-[a ArchitectureDocuemnt](loopService/LoopServiceArchitecure.pdf)
+[a ArchitectureDocuemnt](https://github.com/kodjobaah/loopService/blob/master/LoopServiceArchitecture.pdf)
