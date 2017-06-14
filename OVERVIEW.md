@@ -26,11 +26,13 @@ Then to start the service type:
 **java -jar build/libs/loop-service-0.1.0.jar**
 
 ### Testing the endpoints ###
-Currently the only enpoint that has been implemented is the events end point:
 
+
+#### Apps end point ####
+**/bin/submit_lots_of_apps**
+
+#### Events End Point ####
 **bin/get_events http://127.0.0.1:8080/events**
-
-**/bin/submit_lots_of_apps***
 
 ### Limitations ###
 An assumption has been made that an external service determines whether an event
