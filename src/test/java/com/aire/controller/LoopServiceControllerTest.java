@@ -1,19 +1,29 @@
 package com.aire.controller;
 
+import static org.hamcrest.Matchers.*;
+import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
+import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.net.URLEncoder;
-
+import com.aire.model.Event;
+import com.aire.model.EventHolder;
+import com.aire.service.LoopService;
+import com.aire.utils.TestUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -24,46 +34,44 @@ import org.springframework.test.web.servlet.MockMvc;
 @AutoConfigureMockMvc
 public class LoopServiceControllerTest {
 
-    public class TestData {
-        private String name;
-
-        public TestData(String value) {
-            this.name = value;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-    }
-
   @Autowired private MockMvc mockMvc;
 
   @Autowired private TestRestTemplate restTemplate;
 
   @Autowired private ObjectMapper mapper;
 
+  @MockBean private LoopService loopService;
+
   @Test
   public void getEvents() throws Exception {
 
+    List<EventHolder> currentEvents = new ArrayList<EventHolder>();
+    EventHolder highRisk = new EventHolder(Event.INCREASE_HIGH_RISK, LocalDateTime.now());
+    currentEvents.add(highRisk);
+
+    given(this.loopService.getEvents()).willReturn(currentEvents);
+
     String request = "/events";
-    String result = "[\"INCREASE_HIGH_RISK\"]";
-    this.mockMvc.perform(get(request)).andDo(print()).andExpect(content().string(result)).andExpect(status().isOk());
+    this.mockMvc
+        .perform(get(request))
+        .andExpect(jsonPath("$", hasSize(1)))
+        .andExpect(jsonPath("$[0].event", is("INCREASE_HIGH_RISK")))
+        .andDo(print())
+        .andExpect(status().isOk());
   }
 
   @Test
   public void addApplication() throws Exception {
-    TestData testData = new TestData("value");
-    String json = mapper.writeValueAsString(testData);
-    mockMvc.perform(post("/apps")
-              .contentType(MediaType.APPLICATION_JSON)
-              .content(json)
-              .accept(MediaType.APPLICATION_JSON))
-             .andExpect(content().json("[{\"success\":\"true\"}]"))
-              .andExpect(status().isCreated());
 
+    String request = TestUtils.getApplications();
+
+    mockMvc
+        .perform(
+            post("/apps")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(request)
+                .accept(MediaType.APPLICATION_JSON))
+        .andExpect(content().json("{\"success\": 10 }"))
+        .andExpect(status().isOk());
   }
 }

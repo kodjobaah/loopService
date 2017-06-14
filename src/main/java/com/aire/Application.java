@@ -11,12 +11,7 @@ import org.springframework.context.annotation.ComponentScan;
 @EnableAutoConfiguration(
   exclude = {DataSourceAutoConfiguration.class, HibernateJpaAutoConfiguration.class}
 )
-@ComponentScan({
-  "com.aire",
-  "com.aire.controller",
-  "com.aire.service",
-  "com.aire.model"
-})
+@ComponentScan({"com.aire", "com.aire.controller", "com.aire.service", "com.aire.model"})
 public class Application {
   public static void main(String[] args) {
     SpringApplication.run(Application.class, args);

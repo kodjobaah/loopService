@@ -1,24 +1,37 @@
 package com.aire.service;
 
-import com.aire.model.Events;
-import org.springframework.stereotype.Service;
-
+import com.aire.model.ApplicationData;
+import com.aire.model.Event;
+import com.aire.model.EventHolder;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import org.springframework.stereotype.Service;
 
 @Service
 public class LoopService {
 
+  private static int THRESHOLD = 10;
+
   public LoopService() {}
 
-  List<Events> currentEvents;
-    {
-        currentEvents = new ArrayList<Events>();
-        currentEvents.add(Events.INCREASE_HIGH_RISK);
-    }
+  List<EventHolder> currentEvents = new ArrayList<EventHolder>();
 
-    public List<Events> getEvents() {
-            return currentEvents;
-    }
+  public List<EventHolder> getEvents() {
+    return currentEvents;
+  }
 
+  public void addApplication(List<ApplicationData> testData) {
+
+    int total = testData.size();
+
+    long numberOfItems =
+        testData.stream().filter(app -> Integer.valueOf(app.getDelinq2yrs()) > THRESHOLD).count();
+
+    double percent = Double.valueOf(numberOfItems) / Double.valueOf(total);
+    if (percent > 0.2) {
+      EventHolder highRisk = new EventHolder(Event.INCREASE_HIGH_RISK, LocalDateTime.now());
+      currentEvents.add(highRisk);
+    }
+  }
 }
