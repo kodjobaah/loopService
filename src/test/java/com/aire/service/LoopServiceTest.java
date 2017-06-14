@@ -2,6 +2,7 @@ package com.aire.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.aire.Application;
 import com.aire.model.ApplicationData;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,11 +35,23 @@ public class LoopServiceTest {
   @Test
   public void testForNoRaiseEvent() {
 
-    int numEventsBefore = loopService.getEvents().size();
-    loopService.addApplication(getTestData(2));
-    int numEventsAfter = loopService.getEvents().size();
-    assertThat(numEventsBefore).isEqualTo(numEventsAfter);
+        int numEventsBefore = loopService.getEvents().size();
+        loopService.addApplication(getTestData(2));
+        int numEventsAfter = loopService.getEvents().size();
+        assertThat(numEventsBefore).isEqualTo(numEventsAfter);
   }
+
+    @Test
+    public void testForNullValues() {
+
+        List<ApplicationData> testData = new ArrayList<ApplicationData>();
+        ApplicationData appData = new ApplicationData();
+        testData.add(appData);
+        int numEventsBefore = loopService.getEvents().size();
+        loopService.addApplication(testData);
+        int numEventsAfter = loopService.getEvents().size();
+        assertThat(numEventsBefore).isEqualTo(numEventsAfter);
+   }
 
   private List<ApplicationData> getTestData(int percent) {
 

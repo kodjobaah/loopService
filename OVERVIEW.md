@@ -29,6 +29,7 @@ Then to start the service type:
 Currently the only enpoint that has been implemented is the events end point:
 
 **bin/get_events http://127.0.0.1:8080/events**
+
 **/bin/submit_lots_of_apps***
 
 ### Limitations ###

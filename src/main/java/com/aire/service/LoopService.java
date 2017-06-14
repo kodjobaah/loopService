@@ -26,7 +26,9 @@ public class LoopService {
     int total = testData.size();
 
     long numberOfItems =
-        testData.stream().filter(app -> Integer.valueOf(app.getDelinq2yrs()) > THRESHOLD).count();
+        testData.stream().filter(app -> {
+                return app.getDelinq2yrs() == null ? false : Double.valueOf(app.getDelinq2yrs()) > THRESHOLD;
+            }).count();
 
     double percent = Double.valueOf(numberOfItems) / Double.valueOf(total);
     if (percent > 0.2) {
